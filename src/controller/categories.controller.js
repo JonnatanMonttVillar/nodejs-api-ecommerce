@@ -1,10 +1,46 @@
 const categoryController = {};
+const Category = require('../model/Category');
 
-categoryController.getProducts = (req, res) => res.json({message: 'Get Categories'});
-categoryController.createProduct = (req, res) => res.json({message: 'Category Saved'});
+/* ------------------------------------------------------- */
+categoryController.getCategories = async (req, res) => {
+    const categories = await Category.find();
+    res.json(categories) 
+};
 
-categoryController.getProduct = (req, res) => res.json({message: 'Get Category'});
-categoryController.updateProduct = (req, res) => res.json({message: 'Category Update'});
-categoryController.deleteProduct = (req, res) => res.json({message: 'Category Remove'});
+/* ------------------------------------------------------- */
+categoryController.createCategory = async (req, res) => {
+    try {
+        const { name } = req.body;
+        const newCategory = new Category({
+            name
+        });
+        await newCategory.save();
+        res.json({newCategory, message: 'Category Saved'}) 
+    } catch (error) {
+        res.json({message: 'Change name of category'}) 
+    }
+
+};
+
+/* ------------------------------------------------------- */
+categoryController.getCategory = async (req, res) => {
+    const category = await Category.findById(req.params.id);
+    res.json(category) 
+};
+
+/* ------------------------------------------------------- */
+categoryController.updateCategory = async (req, res) => {
+    const { name } = req.body;
+    await Category.findOneAndUpdate(req.params.id, {
+        name
+    });
+    res.json({Category, message: 'Category Update'})
+};
+
+/* ------------------------------------------------------- */
+categoryController.deleteCategory = async (req, res) => {
+    await Category.findOneAndDelete(req.params.id);
+    res.json({Category, message: 'Category Remove'})
+};
 
 module.exports = categoryController;
